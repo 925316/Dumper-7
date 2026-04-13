@@ -299,3 +299,58 @@ std::string CollisionManager::StringifyName(UEStruct Struct, NameInfo Info)
 
 	return Name;
 }
+
+std::string CollisionManager::StringifyName(UEStruct Struct, UEProperty Member, NameInfo Info)
+{
+	static auto HasSameScopeCollision = [](const NameContainer& Infos, HashStringTableIndex NameIdx, ECollisionType CollisionType) -> bool
+	{
+		int32 NumMatches = 0;
+
+		for (const NameInfo& ExistingInfo : Infos)
+		{
+			if (ExistingInfo.Name != NameIdx)
+				continue;
+
+			if (static_cast<ECollisionType>(ExistingInfo.OwnType) != CollisionType)
+				continue;
+
+			NumMatches++;
+
+			if (NumMatches > 1)
+				return true;
+		}
+
+		return false;
+	};
+
+	const ECollisionType OwnCollisionType = static_cast<ECollisionType>(Info.OwnType);
+	std::string Name = MemberNames.GetStringEntry(Info.Name).GetName();
+
+	if (OwnCollisionType == ECollisionType::MemberName)
+	{
+		if (Info.SuperMemberNameCollisionCount > 0x0)
+			Name += ("_" + Struct.GetValidName());
+
+		const bool bUseOffsetSuffix = Info.MemberNameCollisionCount > 0x0 || HasSameScopeCollision(NameInfos.at(Struct.GetIndex()), Info.Name, OwnCollisionType);
+
+		if (bUseOffsetSuffix)
+			Name += std::format("_0x{:02X}", Member.GetOffset());
+
+		return Name;
+	}
+
+	if (OwnCollisionType == ECollisionType::ParameterName)
+	{
+		if (Info.MemberNameCollisionCount > 0x0 || Info.SuperMemberNameCollisionCount > 0x0 || Info.FunctionNameCollisionCount > 0x0 || Info.SuperFuncNameCollisionCount > 0x0)
+			Name = ("Param_" + Name);
+
+		const bool bUseOffsetSuffix = Info.ParamNameCollisionCount > 0x0 || HasSameScopeCollision(NameInfos.at(Struct.GetIndex()), Info.Name, OwnCollisionType);
+
+		if (bUseOffsetSuffix)
+			Name += std::format("_0x{:02X}", Member.GetOffset());
+
+		return Name;
+	}
+
+	return StringifyName(Struct, Info);
+}

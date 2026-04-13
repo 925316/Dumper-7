@@ -138,6 +138,7 @@ public:
 	void AddReservedName(const std::string& Name);
 	void AddStructToNameContainer(UEStruct ObjAsStruct, bool bIsStruct);
 
+	std::string StringifyName(UEStruct Struct, UEProperty Member, NameInfo Info);
 	std::string StringifyName(UEStruct Struct, NameInfo Info);
 
 public:

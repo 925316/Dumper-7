@@ -13,7 +13,7 @@ PropertyWrapper::PropertyWrapper(const std::shared_ptr<StructWrapper>& Str, UEPr
 
 std::string PropertyWrapper::GetName() const
 {
-    return bIsUnrealProperty ? MemberManager::StringifyName(Struct->GetUnrealStruct(), Name) : PredefProperty->Name;
+    return bIsUnrealProperty ? MemberManager::StringifyName(Struct->GetUnrealStruct(), Property, Name) : PredefProperty->Name;
 }
 
 std::string PropertyWrapper::GetType() const

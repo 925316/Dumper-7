@@ -268,4 +268,9 @@ public:
 	{
 		return MemberNames.StringifyName(Struct, Name);
 	}
+
+	static inline std::string StringifyName(UEStruct Struct, UEProperty Member, NameInfo Name)
+	{
+		return MemberNames.StringifyName(Struct, Member, Name);
+	}
 };

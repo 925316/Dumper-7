@@ -1178,12 +1178,10 @@ std::string CppGenerator::GetFunctionSignature(UEFunction Func)
 				Type = "const " + Type;
 		}
 
-		std::string ParamName = Param.GetValidName();
-
 		if (!bIsFirstParam)
 			OutParameters += ", ";
 
-		OutParameters += Type + " " + ParamName;
+		OutParameters += Type;
 
 		bIsFirstParam = false;
 	}
